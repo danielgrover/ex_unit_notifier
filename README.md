@@ -32,6 +32,14 @@ $ mix deps.get
 
 Ensure [terminal-notifier](https://github.com/julienXX/terminal-notifier) is installed and available through the users `PATH`.
 
+Optional error/ok alert sounds can be configured using application environment configuraton, for example in your `confing/test.exs`:
+
+```elixir
+config :ex_unit_notifier,
+  sound: [ok: "Hero", error: "Sosumi"]
+```
+The sound names can be found in the Sound prefpane. Custom sounds can be dropped as `.aiff` files in your `~/Library/Sound/` folder and will appear in the prefpane.
+
 ### For Linux
 
 Install `notify-send`:
