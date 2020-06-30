@@ -24,6 +24,7 @@ defmodule ExUnitNotifier.Notifiers.TerminalNotifierTest do
       end)
     end
 
+    @tag :pending
     test ":ok status and key exists, sound option present" do
       options = notify_options(:ok, "ok")
       assert "-sound" in options

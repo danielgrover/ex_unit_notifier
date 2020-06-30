@@ -22,19 +22,23 @@ defmodule ExUnitNotifier do
   def init(_opts), do: {:ok, %Counter{}}
 
   def handle_cast({:test_finished, %ExUnit.Test{state: nil}}, counter),
-    do: {:noreply, counter |> Counter.add_test()}
+    do: {:noreply, counter |> Counter.increment(:tests)}
 
-  def handle_cast({:test_finished, %ExUnit.Test{state: {:failed, _}}}, counter),
-    do: {:noreply, counter |> Counter.add_test() |> Counter.add_failed()}
+  def handle_cast({:test_finished, %ExUnit.Test{state: state, tags: tags}}, counter) do
+    state =
+      case tags do
+        %{pending: true} -> :excluded
+        %{skip: true} -> :skipped
+        _ -> elem(state, 0)
+      end
 
-  def handle_cast({:test_finished, %ExUnit.Test{state: {:skip, _}}}, counter),
-    do: {:noreply, counter |> Counter.add_test() |> Counter.add_skipped()}
+    counter =
+      counter
+      |> Counter.increment(state)
+      |> Counter.increment(:tests)
 
-  def handle_cast({:test_finished, %ExUnit.Test{state: {:excluded, _}}}, counter),
-    do: {:noreply, counter |> Counter.add_test() |> Counter.add_skipped()}
-
-  def handle_cast({:test_finished, %ExUnit.Test{state: {:invalid, _}}}, counter),
-    do: {:noreply, counter |> Counter.add_test() |> Counter.add_invalid()}
+    {:noreply, counter}
+  end
 
   def handle_cast({:suite_finished, run_us, load_us}, counter) do
     notifier().notify(status(counter), MessageFormatter.format(counter, run_us, load_us))
