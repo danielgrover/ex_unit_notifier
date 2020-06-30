@@ -134,8 +134,6 @@ defmodule ExUnitNotifierTest do
     run_sample_test()
 
     assert_receive {:ok, message}
-    # This now reports as "Excluded" to match UxUnit change in v1.7
-    #    : https://github.com/elixir-lang/elixir/blob/v1.7/CHANGELOG.md
     assert message =~ ~r(2 tests, 0 failures, 1 excluded, 1 skipped in \d+\.\d{2} seconds)
   end
 

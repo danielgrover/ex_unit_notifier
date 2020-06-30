@@ -25,7 +25,7 @@ defmodule ExUnitNotifier do
     do: {:noreply, counter |> Counter.increment(:tests)}
 
   def handle_cast({:test_finished, %ExUnit.Test{state: state, tags: tags}}, counter) do
-    state =
+    test_state =
       case tags do
         %{pending: true} -> :excluded
         %{skip: true} -> :skipped
@@ -34,7 +34,7 @@ defmodule ExUnitNotifier do
 
     counter =
       counter
-      |> Counter.increment(state)
+      |> Counter.increment(test_state)
       |> Counter.increment(:tests)
 
     {:noreply, counter}
